@@ -1,20 +1,55 @@
 package com.example.taskflow
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.taskflow.data.model.Priority
+import com.example.taskflow.data.model.Task
+import com.example.taskflow.ui.tasks.TasksAdapter
+import com.tanvi.taskflow.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+    private val tasksAdapter = TasksAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setUpRecyclerView()
+    }
+
+    private fun setUpRecyclerView(){
+        binding.rvTasks.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = tasksAdapter
         }
+    }
+
+    private fun loadSampleTasks(){
+        val tasks = listOf(
+            Task(
+                id = "1",
+                title = "Learn Kotlin Coroutines",
+                description = "Understand suspend functions and Flow",
+                priority = Priority.HIGH
+            ),
+            Task(
+                id = "2",
+                title = "Build TaskFlow UI",
+                description = "Create reusable XML task cards",
+                priority = Priority.MEDIUM
+            ),
+            Task(
+                id = "3",
+                title = "Read Firebase documentation",
+                description = "Explore Authentication and Firestore",
+                priority = Priority.LOW
+            )
+        )
+
+        tasksAdapter.submitList(tasks)
     }
 }
