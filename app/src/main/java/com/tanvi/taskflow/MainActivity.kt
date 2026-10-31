@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setUpRecyclerView()
+        loadSampleTasks()
     }
 
     private fun setUpRecyclerView(){
