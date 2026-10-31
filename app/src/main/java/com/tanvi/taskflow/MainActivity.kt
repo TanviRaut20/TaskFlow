@@ -1,11 +1,11 @@
-package com.example.taskflow
+package com.tanvi.taskflow
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.taskflow.data.model.Priority
-import com.example.taskflow.data.model.Task
-import com.example.taskflow.ui.tasks.TasksAdapter
+import com.tanvi.taskflow.data.model.Priority
+import com.tanvi.taskflow.data.model.Task
+import com.tanvi.taskflow.ui.tasks.TasksAdapter
 import com.tanvi.taskflow.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

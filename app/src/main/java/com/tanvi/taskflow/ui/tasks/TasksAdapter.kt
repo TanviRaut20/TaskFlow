@@ -1,4 +1,4 @@
-package com.example.taskflow.ui.tasks
+package com.tanvi.taskflow.ui.tasks
 
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.taskflow.data.model.Priority
-import com.example.taskflow.data.model.Task
+import com.tanvi.taskflow.data.model.Priority
+import com.tanvi.taskflow.data.model.Task
 import com.tanvi.taskflow.databinding.ItemTaskBinding
 
 class TasksAdapter : ListAdapter<Task, TasksAdapter.TaskViewHolder>(TaskDiffCallBack()) {

@@ -1,4 +1,4 @@
-package com.example.taskflow.data.model
+package com.tanvi.taskflow.data.model
 
 data class Task(
     val id: String,
