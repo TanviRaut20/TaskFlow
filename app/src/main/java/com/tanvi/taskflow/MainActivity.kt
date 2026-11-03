@@ -1,12 +1,15 @@
 package com.tanvi.taskflow
 
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.tanvi.taskflow.data.model.Priority
 import com.tanvi.taskflow.data.model.Task
 import com.tanvi.taskflow.ui.tasks.TasksAdapter
 import com.tanvi.taskflow.databinding.ActivityMainBinding
+import com.tanvi.taskflow.databinding.BottomSheetAddTaskBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -20,16 +23,20 @@ class MainActivity : AppCompatActivity() {
 
         setUpRecyclerView()
         loadSampleTasks()
+
+        binding.fabAddTask.setOnClickListener {
+            showAddTaskBottomSheet()
+        }
     }
 
-    private fun setUpRecyclerView(){
+    private fun setUpRecyclerView() {
         binding.rvTasks.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = tasksAdapter
         }
     }
 
-    private fun loadSampleTasks(){
+    private fun loadSampleTasks() {
         val tasks = listOf(
             Task(
                 id = "1",
@@ -52,5 +59,18 @@ class MainActivity : AppCompatActivity() {
         )
 
         tasksAdapter.submitList(tasks)
+    }
+
+    private fun showAddTaskBottomSheet() {
+        val dialog = BottomSheetDialog(this)
+        val sheetBinding = BottomSheetAddTaskBinding.inflate(layoutInflater)
+        dialog.setContentView(sheetBinding.root)
+        selectPriority(sheetBinding)
+        dialog.show()
+    }
+
+    private fun selectPriority(sheetBinding: BottomSheetAddTaskBinding) {
+        val items = listOf("Low", "Medium", "High")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, items)
     }
 }
