@@ -14,6 +14,7 @@ import com.tanvi.taskflow.databinding.BottomSheetAddTaskBinding
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val tasksAdapter = TasksAdapter()
+    private val taskList = mutableListOf<Task>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +58,8 @@ class MainActivity : AppCompatActivity() {
                 priority = Priority.LOW
             )
         )
-
-        tasksAdapter.submitList(tasks)
+        taskList.addAll(tasks)
+        tasksAdapter.submitList(taskList.toList())
     }
 
     private fun showAddTaskBottomSheet() {
@@ -67,10 +68,44 @@ class MainActivity : AppCompatActivity() {
         dialog.setContentView(sheetBinding.root)
         selectPriority(sheetBinding)
         dialog.show()
+
+        sheetBinding.btnSaveTask.setOnClickListener {
+            val title = sheetBinding.etTaskTitle.text.toString().trim()
+
+            if (title.isEmpty()) {
+                sheetBinding.tilTaskTitle.error = "Task title is required"
+                return@setOnClickListener
+            }
+
+            sheetBinding.tilTaskTitle.error = null
+
+            val description = sheetBinding.etTaskDescription.text.toString().trim()
+            val selectedPriority = sheetBinding.actTaskPriority.text.toString()
+
+            if (selectedPriority.isEmpty()) {
+                sheetBinding.tilTaskPriority.error = "Priority is required"
+                return@setOnClickListener
+            }
+            sheetBinding.tilTaskPriority.error = null
+
+            val taskCreated = Task(
+                java.util.UUID.randomUUID().toString(),
+                title,
+                description,
+                Priority.valueOf(selectedPriority.uppercase())
+            )
+
+            taskList.add(taskCreated)
+            tasksAdapter.submitList(taskList.toList())
+            dialog.dismiss()
+
+        }
     }
 
     private fun selectPriority(sheetBinding: BottomSheetAddTaskBinding) {
         val items = listOf("Low", "Medium", "High")
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, items)
+        sheetBinding.actTaskPriority.setAdapter(adapter)
     }
+
 }

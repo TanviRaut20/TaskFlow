@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.tanvi.taskflow" />
+                  <option name="mobileSdkAppId" value="1:786884589442:android:82ac39d5f52b846cae419b" />
+                  <option name="projectId" value="taskflow-62d5a" />
+                  <option name="projectNumber" value="786884589442" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
