@@ -10,14 +10,14 @@ import com.tanvi.taskflow.data.model.Priority
 import com.tanvi.taskflow.data.model.Task
 import com.tanvi.taskflow.databinding.ItemTaskBinding
 
-class TasksAdapter : ListAdapter<Task, TasksAdapter.TaskViewHolder>(TaskDiffCallBack()) {
+class TasksAdapter(private val onTaskChecked: (Task, Boolean) -> Unit) : ListAdapter<Task, TasksAdapter.TaskViewHolder>(TaskDiffCallBack()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TasksAdapter.TaskViewHolder {
         val binding = ItemTaskBinding.inflate(LayoutInflater.from(parent.context),
             parent,
             false)
 
-        return TaskViewHolder(binding)
+        return TaskViewHolder(binding, onTaskChecked)
     }
 
     override fun onBindViewHolder(holder: TasksAdapter.TaskViewHolder, position: Int) {
@@ -25,7 +25,8 @@ class TasksAdapter : ListAdapter<Task, TasksAdapter.TaskViewHolder>(TaskDiffCall
     }
 
     class TaskViewHolder(
-        private val binding: ItemTaskBinding
+        private val binding: ItemTaskBinding,
+        private val onTaskChecked: (Task, Boolean) -> Unit
     ): RecyclerView.ViewHolder(binding.root){
         fun bind(task: Task) = with(binding){
             tvTaskTitle.text = task.title
@@ -44,6 +45,13 @@ class TasksAdapter : ListAdapter<Task, TasksAdapter.TaskViewHolder>(TaskDiffCall
                     Priority.MEDIUM -> Color.rgb(185, 119, 0)
                 }
             )
+
+            cbTaskCompleted.setOnCheckedChangeListener(null)
+            cbTaskCompleted.isChecked = task.isCompleted
+
+            cbTaskCompleted.setOnCheckedChangeListener { _, isChecked ->
+                onTaskChecked(task, isChecked)
+            }
 
             tvTaskTitle.alpha = if (task.isCompleted) 0.5f else 1f
         }

@@ -13,14 +13,25 @@ import com.tanvi.taskflow.databinding.BottomSheetAddTaskBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val tasksAdapter = TasksAdapter()
     private val taskList = mutableListOf<Task>()
+    private lateinit var tasksAdapter: TasksAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        tasksAdapter = TasksAdapter{task, isChecked ->
+            val index = taskList.indexOfFirst { it.id == task.id }
+
+            if (index != -1){
+                taskList[index] = taskList[index].copy(isCompleted = isChecked)
+                tasksAdapter.submitList(taskList.toList())
+            }
+        }
 
         setUpRecyclerView()
         loadSampleTasks()
