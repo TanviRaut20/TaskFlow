@@ -5,6 +5,7 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.tanvi.taskflow.data.model.Priority
 import com.tanvi.taskflow.data.model.Task
 import com.tanvi.taskflow.ui.tasks.TasksAdapter
@@ -24,14 +25,27 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        tasksAdapter = TasksAdapter{task, isChecked ->
+        tasksAdapter = TasksAdapter(onTaskChecked = {task, isChecked ->
             val index = taskList.indexOfFirst { it.id == task.id }
 
             if (index != -1){
                 taskList[index] = taskList[index].copy(isCompleted = isChecked)
                 tasksAdapter.submitList(taskList.toList())
             }
-        }
+        },
+            onTaskDelete = { task ->
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("Delete Task?")
+                    .setMessage("Are you sure you want to delete '${task.title}'")
+                    .setNegativeButton("Cancel"){ dialog, _ ->
+                        dialog.dismiss()
+                    }.setPositiveButton("Delete"){ _,_ ->
+                        taskList.removeAll{it.id == task.id}
+                        tasksAdapter.submitList(taskList.toList())
+                    }.show()
+
+            }
+        )
 
         setUpRecyclerView()
         loadSampleTasks()
