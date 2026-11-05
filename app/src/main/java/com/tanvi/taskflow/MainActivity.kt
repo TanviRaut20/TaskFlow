@@ -1,6 +1,7 @@
 package com.tanvi.taskflow
 
 import android.os.Bundle
+import android.view.View
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity() {
                     }.setPositiveButton("Delete"){ _,_ ->
                         taskList.removeAll{it.id == task.id}
                         tasksAdapter.submitList(taskList.toList())
+                        updateEmptyState()
                     }.show()
 
             }
@@ -85,6 +87,7 @@ class MainActivity : AppCompatActivity() {
         )
         taskList.addAll(tasks)
         tasksAdapter.submitList(taskList.toList())
+        updateEmptyState()
     }
 
     private fun showAddTaskBottomSheet() {
@@ -122,9 +125,17 @@ class MainActivity : AppCompatActivity() {
 
             taskList.add(taskCreated)
             tasksAdapter.submitList(taskList.toList())
+            updateEmptyState()
             dialog.dismiss()
 
         }
+    }
+
+    private fun updateEmptyState() {
+        val isEmpty = taskList.isEmpty()
+
+        binding.rvTasks.visibility = if (isEmpty) View.GONE else View.VISIBLE
+        binding.layoutEmptyState.visibility = if (isEmpty) View.VISIBLE else View.GONE
     }
 
     private fun selectPriority(sheetBinding: BottomSheetAddTaskBinding) {
