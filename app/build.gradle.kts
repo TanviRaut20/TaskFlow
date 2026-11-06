@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.taskflow"
+    namespace = "com.tanvi.taskflow"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -13,7 +13,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.taskflow"
+        applicationId = "com.tanvi.taskflow"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -38,57 +38,45 @@ android {
     }
 }
 
+
 dependencies {
+    // Existing Android dependencies
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.junit)
 
-    // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:35.1.0"))
-
-
-    // TODO: Add the dependencies for Firebase products you want to use
-    // When using the BoM, don't specify versions in Firebase dependencies
-    implementation("com.google.firebase:firebase-analytics")
-
-
-    // Add the dependencies for any other desired Firebase products
-    // https://firebase.google.com/docs/android/setup#available-libraries
-
-    // Android UI
-    implementation("androidx.core:core-ktx:<compatible-version>")
-    implementation("androidx.appcompat:appcompat:<compatible-version>")
-    implementation("com.google.android.material:material:<compatible-version>")
-    implementation("androidx.recyclerview:recyclerview:<compatible-version>")
+    // RecyclerView
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
 
     // Lifecycle and ViewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:<compatible-version>")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:<compatible-version>")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
 
-    // Kotlin coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:<compatible-version>")
+    // Kotlin Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 
     // Room / SQLite
-    implementation("androidx.room:room-runtime:<compatible-version>")
-    implementation("androidx.room:room-ktx:<compatible-version>")
-    ksp("androidx.room:room-compiler:<compatible-version>")
+    implementation("androidx.room:room-runtime:2.8.2")
+    implementation("androidx.room:room-ktx:2.8.2")
+    ksp("androidx.room:room-compiler:2.8.2")
 
-    // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:35.1.0"))
+    // Firebase BoM — declare only once
+    implementation(platform("com.google.firebase:firebase-bom:34.16.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-messaging")
 
-    // Dependency injection
-    implementation("com.google.dagger:hilt-android:<compatible-version>")
-    ksp("com.google.dagger:hilt-compiler:<compatible-version>")
+    // Hilt — dependency injection
+    implementation("com.google.dagger:hilt-android:2.57.2")
+    ksp("com.google.dagger:hilt-compiler:2.57.2")
 
     // Unit testing
-    testImplementation("junit:junit:<compatible-version>")
-    testImplementation("io.mockk:mockk:<compatible-version>")
+    testImplementation(libs.junit)
+    testImplementation("io.mockk:mockk:1.14.5")
+
+    // Instrumented tests
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.junit)
 }
