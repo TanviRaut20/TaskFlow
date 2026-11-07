@@ -7,16 +7,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.tanvi.taskflow.data.local.TaskDatabaseProvider
 import com.tanvi.taskflow.data.model.Priority
 import com.tanvi.taskflow.data.model.Task
+import com.tanvi.taskflow.data.repository.TaskRepository
 import com.tanvi.taskflow.ui.tasks.TasksAdapter
 import com.tanvi.taskflow.databinding.ActivityMainBinding
 import com.tanvi.taskflow.databinding.BottomSheetAddTaskBinding
+import com.tanvi.taskflow.ui.tasks.TasksViewModel
+import com.tanvi.taskflow.ui.tasks.TasksViewModelFactory
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val taskList = mutableListOf<Task>()
     private lateinit var tasksAdapter: TasksAdapter
+    private lateinit var viewModel: TasksViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,14 +34,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val database = TaskDatabaseProvider.getDatabase(applicationContext)
+        val repository = TaskRepository(database.taskDao())
+        val factory = TasksViewModelFactory(repository)
 
-        tasksAdapter = TasksAdapter(onTaskChecked = {task, isChecked ->
-            val index = taskList.indexOfFirst { it.id == task.id }
+        viewModel = ViewModelProvider(this,factory)[TasksViewModel::class.java]
 
-            if (index != -1){
-                taskList[index] = taskList[index].copy(isCompleted = isChecked)
-                tasksAdapter.submitList(taskList.toList())
-            }
+
+        tasksAdapter = TasksAdapter(onTaskChecked = { task, isChecked ->
+            val updatedTask = task.copy(isCompleted = isChecked)
+            viewModel.updateTask(updatedTask)
         },
             onTaskDelete = { task ->
                 MaterialAlertDialogBuilder(this)
@@ -41,16 +52,14 @@ class MainActivity : AppCompatActivity() {
                     .setNegativeButton("Cancel"){ dialog, _ ->
                         dialog.dismiss()
                     }.setPositiveButton("Delete"){ _,_ ->
-                        taskList.removeAll{it.id == task.id}
-                        tasksAdapter.submitList(taskList.toList())
-                        updateEmptyState()
+                        viewModel.deleteTask(task)
                     }.show()
 
             }
         )
 
         setUpRecyclerView()
-        loadSampleTasks()
+        observeTasks()
 
         binding.fabAddTask.setOnClickListener {
             showAddTaskBottomSheet()
@@ -85,9 +94,6 @@ class MainActivity : AppCompatActivity() {
                 priority = Priority.LOW
             )
         )
-        taskList.addAll(tasks)
-        tasksAdapter.submitList(taskList.toList())
-        updateEmptyState()
     }
 
     private fun showAddTaskBottomSheet() {
@@ -123,25 +129,35 @@ class MainActivity : AppCompatActivity() {
                 Priority.valueOf(selectedPriority.uppercase())
             )
 
-            taskList.add(taskCreated)
-            tasksAdapter.submitList(taskList.toList())
-            updateEmptyState()
+            viewModel.insertTask(taskCreated)
             dialog.dismiss()
 
         }
     }
 
-    private fun updateEmptyState() {
-        val isEmpty = taskList.isEmpty()
+    private fun updateEmptyState(isEmpty: Boolean) {
+        binding.rvTasks.visibility =
+            if (isEmpty) View.GONE else View.VISIBLE
 
-        binding.rvTasks.visibility = if (isEmpty) View.GONE else View.VISIBLE
-        binding.layoutEmptyState.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        binding.layoutEmptyState.visibility =
+            if (isEmpty) View.VISIBLE else View.GONE
     }
 
     private fun selectPriority(sheetBinding: BottomSheetAddTaskBinding) {
         val items = listOf("Low", "Medium", "High")
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, items)
         sheetBinding.actTaskPriority.setAdapter(adapter)
+    }
+
+    private fun observeTasks(){
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewModel.tasks.collect { tasks ->
+                    tasksAdapter.submitList(tasks)
+                    updateEmptyState(tasks.isEmpty())
+                }
+            }
+        }
     }
 
 }
