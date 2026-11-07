@@ -1,3 +1,6 @@
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
