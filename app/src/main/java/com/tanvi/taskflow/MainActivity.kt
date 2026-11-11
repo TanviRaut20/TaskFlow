@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -62,6 +63,7 @@ class MainActivity : AppCompatActivity() {
         setUpRecyclerView()
         observeTasks()
         setupTaskFilters()
+        setUpSearch()
 
         binding.fabAddTask.setOnClickListener {
             showAddTaskBottomSheet()
@@ -88,27 +90,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadSampleTasks() {
-        val tasks = listOf(
-            Task(
-                id = "1",
-                title = "Learn Kotlin Coroutines",
-                description = "Understand suspend functions and Flow",
-                priority = Priority.HIGH
-            ),
-            Task(
-                id = "2",
-                title = "Build TaskFlow UI",
-                description = "Create reusable XML task cards",
-                priority = Priority.MEDIUM
-            ),
-            Task(
-                id = "3",
-                title = "Read Firebase documentation",
-                description = "Explore Authentication and Firestore",
-                priority = Priority.LOW
-            )
-        )
+    private fun setUpSearch(){
+        binding.etSearchTasks.doAfterTextChanged { editable ->
+            viewModel.updateSearchQuery(editable.toString())
+        }
     }
 
     private fun showAddTaskBottomSheet() {

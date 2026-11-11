@@ -15,5 +15,6 @@
     <string name="all">All</string>
     <string name="pending">Pending</string>
     <string name="completed">Completed</string>
+    <string name="search_tasks_by_title">Search tasks by title</string>
 
 </resources>
