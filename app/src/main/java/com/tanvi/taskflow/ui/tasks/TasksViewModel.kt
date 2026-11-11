@@ -17,14 +17,17 @@ class TasksViewModel(
 
     private val _selectedFilter = MutableStateFlow(TaskFilter.ALL)
     private val _searchQuery = MutableStateFlow("")
+    private val _selectedSortOption = MutableStateFlow(TaskSortOption.NEWEST_FIRST)
     val searchQuery = _searchQuery.asStateFlow()
     val selectedFilter = _selectedFilter.asStateFlow()
+    val selectedSortOption = _selectedSortOption.asStateFlow()
 
     val filteredTasks = combine(
         repository.getAllTasks(),
         selectedFilter,
-        searchQuery
-    ){ tasks, filter, query ->
+        searchQuery,
+        selectedSortOption
+    ){ tasks, filter, query, sortOption ->
 
         val statusFilteredTasks = when (filter) {
             TaskFilter.ALL -> tasks
@@ -36,7 +39,21 @@ class TasksViewModel(
             it.title.contains(query, ignoreCase = true)
         }
 
-        searchFilteredTasks
+        val sortedTasks = when (sortOption) {
+            TaskSortOption.NEWEST_FIRST -> {
+                searchFilteredTasks.sortedByDescending { it.createdAt }
+            }
+
+            TaskSortOption.PRIORITY -> {
+                searchFilteredTasks.sortedByDescending { it.priority.ordinal }
+            }
+
+            TaskSortOption.ALPHABETICAL -> {
+                searchFilteredTasks.sortedBy { it.title.lowercase() }
+            }
+        }
+
+        sortedTasks
 
     }.stateIn(
         scope = viewModelScope,
@@ -46,6 +63,10 @@ class TasksViewModel(
 
     fun setFilter(filter: TaskFilter){
         _selectedFilter.value = filter
+    }
+
+    fun sortTasks(sort: TaskSortOption){
+        _selectedSortOption.value = sort
     }
 
     fun insertTask(task: Task){

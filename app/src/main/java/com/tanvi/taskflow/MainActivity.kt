@@ -23,6 +23,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import androidx.lifecycle.lifecycleScope
 import com.tanvi.taskflow.ui.tasks.TaskFilter
+import com.tanvi.taskflow.ui.tasks.TaskSortOption
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -64,6 +65,7 @@ class MainActivity : AppCompatActivity() {
         observeTasks()
         setupTaskFilters()
         setUpSearch()
+        setupTaskSorting()
 
         binding.fabAddTask.setOnClickListener {
             showAddTaskBottomSheet()
@@ -157,6 +159,37 @@ class MainActivity : AppCompatActivity() {
                     updateEmptyState(tasks.isEmpty())
                 }
             }
+        }
+    }
+
+    private fun setupTaskSorting(){
+        val sortingList = arrayListOf("Newest First", "Priority", "Alphabetical")
+
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            sortingList
+        )
+
+        binding.actvSortTasks.setAdapter(adapter)
+
+        binding.actvSortTasks.setText(sortingList[0], false)
+
+        binding.actvSortTasks.setOnItemClickListener { parent, view, position, id ->
+
+            // Get selected item
+            val selectedItem = parent.getItemAtPosition(position).toString()
+
+            // Map selected item to TaskSortOption
+            val selectedSortOption = when(selectedItem){
+                "Newest First" -> TaskSortOption.NEWEST_FIRST
+                "Priority" -> TaskSortOption.PRIORITY
+                "Alphabetical" -> TaskSortOption.ALPHABETICAL
+                else -> TaskSortOption.NEWEST_FIRST
+            }
+
+            // Update ViewModel
+            viewModel.sortTasks(selectedSortOption)
         }
     }
 

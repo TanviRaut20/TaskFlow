@@ -5,7 +5,8 @@ data class Task(
     var title: String,
     var description: String,
     var priority: Priority,
-    var isCompleted: Boolean = false
+    var isCompleted: Boolean = false,
+    val createdAt: Long = System.currentTimeMillis()
 )
 
 enum class Priority {
