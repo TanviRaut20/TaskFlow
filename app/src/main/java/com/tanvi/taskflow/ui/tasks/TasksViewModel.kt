@@ -16,23 +16,27 @@ class TasksViewModel(
 ): ViewModel(){
 
     private val _selectedFilter = MutableStateFlow(TaskFilter.ALL)
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
     val selectedFilter = _selectedFilter.asStateFlow()
 
     val filteredTasks = combine(
         repository.getAllTasks(),
-        selectedFilter
-    ){ tasks, filter ->
+        selectedFilter,
+        searchQuery
+    ){ tasks, filter, query ->
 
-        when(filter){
+        val statusFilteredTasks = when (filter) {
             TaskFilter.ALL -> tasks
-
-            TaskFilter.PENDING -> {
-                tasks.filter { !it.isCompleted }
-            }
-            TaskFilter.COMPLETED -> {
-                tasks.filter { it.isCompleted }
-            }
+            TaskFilter.PENDING -> tasks.filter { !it.isCompleted }
+            TaskFilter.COMPLETED -> tasks.filter { it.isCompleted }
         }
+
+        val searchFilteredTasks = statusFilteredTasks.filter {
+            it.title.contains(query, ignoreCase = true)
+        }
+
+        searchFilteredTasks
 
     }.stateIn(
         scope = viewModelScope,
@@ -60,5 +64,9 @@ class TasksViewModel(
         viewModelScope.launch {
             repository.deleteTask(task)
         }
+    }
+
+    fun updateSearchQuery(query: String){
+        _searchQuery.value = query
     }
 }

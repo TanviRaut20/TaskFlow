@@ -30,6 +30,23 @@
             android:textColor="#687386"
             android:textSize="14sp" />
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/search"
+            android:layout_marginBottom="16dp"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/etSearchTasks"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:drawableStart="@drawable/ic_search"
+                android:hint="@string/search_tasks_by_title"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.chip.ChipGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,7 +68,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/chipPending"
                 style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:checked="true"
                 android:text="@string/pending"
                 />
 
@@ -60,7 +76,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/chipCompleted"
                 style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:checked="true"
                 android:text="@string/completed"
                 />
         </com.google.android.material.chip.ChipGroup>
