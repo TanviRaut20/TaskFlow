@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import androidx.lifecycle.lifecycleScope
+import com.tanvi.taskflow.ui.tasks.TaskFilter
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -60,9 +61,23 @@ class MainActivity : AppCompatActivity() {
 
         setUpRecyclerView()
         observeTasks()
+        setupTaskFilters()
 
         binding.fabAddTask.setOnClickListener {
             showAddTaskBottomSheet()
+        }
+    }
+
+    private fun setupTaskFilters(){
+        binding.chipGroupFilters.setOnCheckedStateChangeListener { group, checkIds ->
+            val selectedFilter = when (checkIds.firstOrNull()){
+                R.id.chipAll -> TaskFilter.ALL
+                R.id.chipPending -> TaskFilter.PENDING
+                R.id.chipCompleted -> TaskFilter.COMPLETED
+
+                else -> TaskFilter.ALL
+            }
+            viewModel.setFilter(selectedFilter)
         }
     }
 
@@ -152,7 +167,7 @@ class MainActivity : AppCompatActivity() {
     private fun observeTasks(){
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
-                viewModel.tasks.collect { tasks ->
+                viewModel.filteredTasks.collect { tasks ->
                     tasksAdapter.submitList(tasks)
                     updateEmptyState(tasks.isEmpty())
                 }

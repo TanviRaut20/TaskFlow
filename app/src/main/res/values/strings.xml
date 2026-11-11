@@ -12,4 +12,8 @@
     <string name="mark_task_as_completed">Mark task as completed</string>
     <string name="stay_focused_one_task_at_a_time">Stay focused. One task at a time.</string>
     <string name="your_task_list_is_looking_clear">Your task list is looking clear.\nAdd a task to get started.</string>
+    <string name="all">All</string>
+    <string name="pending">Pending</string>
+    <string name="completed">Completed</string>
+
 </resources>
