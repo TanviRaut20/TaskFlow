@@ -65,11 +65,41 @@ class MainActivity : AppCompatActivity() {
         observeTasks()
         setupTaskFilters()
         setUpSearch()
-        setupTaskSorting()
 
         binding.fabAddTask.setOnClickListener {
             showAddTaskBottomSheet()
         }
+
+        binding.btnSortTasks.setOnClickListener {
+            showSortDialog()
+        }
+    }
+
+    private fun showSortDialog(){
+        val sortingOptions = arrayOf(
+            "Newest first",
+            "Priority (High → Low)",
+            "Alphabetical (A–Z)")
+
+        val selectedPosition = when (viewModel.selectedSortOption.value) {
+            TaskSortOption.NEWEST_FIRST -> 0
+            TaskSortOption.PRIORITY -> 1
+            TaskSortOption.ALPHABETICAL -> 2
+        }
+
+        MaterialAlertDialogBuilder(this).setTitle("Sort tasks")
+            .setSingleChoiceItems(sortingOptions, selectedPosition){ dialog, which ->
+                val selectedSortOption = when (which) {
+                    0 -> TaskSortOption.NEWEST_FIRST
+                    1 -> TaskSortOption.PRIORITY
+                    2 -> TaskSortOption.ALPHABETICAL
+                    else -> TaskSortOption.NEWEST_FIRST
+                }
+                viewModel.sortTasks(selectedSortOption)
+                dialog.dismiss()
+        }.setNegativeButton("Cancel", null)
+            .show()
+
     }
 
     private fun setupTaskFilters(){
@@ -162,35 +192,5 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupTaskSorting(){
-        val sortingList = arrayListOf("Newest First", "Priority", "Alphabetical")
-
-        val adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_dropdown_item_1line,
-            sortingList
-        )
-
-        binding.actvSortTasks.setAdapter(adapter)
-
-        binding.actvSortTasks.setText(sortingList[0], false)
-
-        binding.actvSortTasks.setOnItemClickListener { parent, view, position, id ->
-
-            // Get selected item
-            val selectedItem = parent.getItemAtPosition(position).toString()
-
-            // Map selected item to TaskSortOption
-            val selectedSortOption = when(selectedItem){
-                "Newest First" -> TaskSortOption.NEWEST_FIRST
-                "Priority" -> TaskSortOption.PRIORITY
-                "Alphabetical" -> TaskSortOption.ALPHABETICAL
-                else -> TaskSortOption.NEWEST_FIRST
-            }
-
-            // Update ViewModel
-            viewModel.sortTasks(selectedSortOption)
-        }
-    }
 
 }

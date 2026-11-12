@@ -18,5 +18,7 @@
     <string name="sort_tasks">Sort tasks</string>
     <string name="newest_first">Newest first</string>
     <string name="search_tasks_by_title">Search tasks by title</string>
+    <string name="sort">Sort</string>
+    <string name="my_tasks">My Tasks</string>
 
 </resources>
