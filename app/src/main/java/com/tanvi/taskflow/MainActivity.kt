@@ -23,6 +23,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import androidx.lifecycle.lifecycleScope
 import com.tanvi.taskflow.ui.tasks.TaskFilter
+import com.tanvi.taskflow.ui.tasks.TaskSortOption
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -68,6 +69,37 @@ class MainActivity : AppCompatActivity() {
         binding.fabAddTask.setOnClickListener {
             showAddTaskBottomSheet()
         }
+
+        binding.btnSortTasks.setOnClickListener {
+            showSortDialog()
+        }
+    }
+
+    private fun showSortDialog(){
+        val sortingOptions = arrayOf(
+            "Newest first",
+            "Priority (High → Low)",
+            "Alphabetical (A–Z)")
+
+        val selectedPosition = when (viewModel.selectedSortOption.value) {
+            TaskSortOption.NEWEST_FIRST -> 0
+            TaskSortOption.PRIORITY -> 1
+            TaskSortOption.ALPHABETICAL -> 2
+        }
+
+        MaterialAlertDialogBuilder(this).setTitle("Sort tasks")
+            .setSingleChoiceItems(sortingOptions, selectedPosition){ dialog, which ->
+                val selectedSortOption = when (which) {
+                    0 -> TaskSortOption.NEWEST_FIRST
+                    1 -> TaskSortOption.PRIORITY
+                    2 -> TaskSortOption.ALPHABETICAL
+                    else -> TaskSortOption.NEWEST_FIRST
+                }
+                viewModel.sortTasks(selectedSortOption)
+                dialog.dismiss()
+        }.setNegativeButton("Cancel", null)
+            .show()
+
     }
 
     private fun setupTaskFilters(){
@@ -159,5 +191,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 
 }

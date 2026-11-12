@@ -12,7 +12,8 @@ fun Task.toEntity(): TaskEntity{
         title = title,
         description = description,
         priority = priority,
-        isCompleted = isCompleted
+        isCompleted = isCompleted,
+        createdAt = createdAt
     )
 }
 
@@ -22,7 +23,8 @@ fun TaskEntity.toTask(): Task{
         title = title,
         description = description,
         priority = priority,
-        isCompleted = isCompleted
+        isCompleted = isCompleted,
+        createdAt = createdAt
     )
 }
 
